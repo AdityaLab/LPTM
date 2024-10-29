@@ -9,5 +9,5 @@ Large Pre-trained Time-series models
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Sync dependencies
-uv sync
+uv sync # Use `uv sync --reinstall` to rebuild after changing source code from rust
 ```

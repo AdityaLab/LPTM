@@ -4,9 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ndarray = "0.16.1"
+ndarray = { version = "0.16.1", features = [
+    "rayon",
+    "blas",
+    "matrixmultiply-threading",
+] }
 pyo3 = { version = "0.17", features = ["extension-module"] }
-rayon = "1.10.0"
 
 [lib]
 crate-type = ["cdylib"]
