@@ -67,3 +67,27 @@ class ScoringModuleMult(ScoringModuleBase):
     def compute_scores(self, W1: torch.Tensor, W2: torch.Tensor) -> torch.Tensor:
         scores = torch.bmm(W1, W2.transpose(1, 2))  # (batch_size, seq_len, seq_len)
         return scores
+
+
+class ScoringModuleEnergy(ScoringModuleBase):
+    """Use energy function to compute scores"""
+
+    def __init__(self, embed_size: int, hidden_size: int | None = None):
+        super().__init__(embed_size, hidden_size)
+
+    def compute_scores(self, W1: torch.Tensor, W2: torch.Tensor) -> torch.Tensor:
+        """
+        Compute the similarity scores between two tensors based on their Euclidean distances.
+
+        Args:
+            W1 (torch.Tensor): A tensor of shape (batch_size, seq_len, feature_dim).
+            W2 (torch.Tensor): A tensor of shape (batch_size, seq_len, feature_dim).
+
+        Returns:
+            torch.Tensor: A tensor of shape (batch_size, seq_len, seq_len) containing the similarity scores.
+        """
+        distances = (
+            (W1.unsqueeze(1) - W2.unsqueeze(2)).pow(2).sum(dim=-1)
+        )  # (batch_size, seq_len, seq_len)
+        scores = torch.exp(-distances)
+        return scores
