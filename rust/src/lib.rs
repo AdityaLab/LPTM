@@ -1,32 +1,41 @@
+use std::cmp;
+
 use ndarray::{s, Array1, Array2, Array3};
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
 #[pyfunction]
 fn pad_times(scores: Vec<Vec<Vec<f32>>>, times: Vec<i32>) -> Vec<Vec<Vec<f32>>> {
-    let mut scores_cp = Array3::from_shape_vec(
-        (scores.len(), scores[0].len(), scores[0][0].len()),
-        scores.into_iter().flatten().flatten().collect(),
-    )
-    .unwrap();
-
+    // Deep copy of scores
+    let mut scores_cp = scores.clone();
     for (i, &t) in times.iter().enumerate() {
-        for j in t as usize..scores_cp.shape()[1] {
-            for k in 0..scores_cp.shape()[2] {
-                scores_cp[[i, j, k]] = f32::NEG_INFINITY;
-                scores_cp[[i, k, j]] = f32::NEG_INFINITY;
+        for j in t as usize..scores_cp[0].len() {
+            for k in 0..scores_cp[0][0].len() {
+                scores_cp[i][j][k] = f32::NEG_INFINITY;
+                scores_cp[i][k][j] = f32::NEG_INFINITY;
+            }
+        }
+    }
+    scores_cp
+}
+
+fn select_energy(scores: Vec<Vec<f32>>) -> (Vec<Vec<usize>>, Vec<f32>) {
+    let steps = scores.len();
+    let mut dp = vec![f32::INFINITY; steps + 1];
+    let mut backtrack = vec![0; steps + 1];
+    dp[0] = 0.0;
+    for idx in 1..=steps {
+        for j in 0..idx {
+            let cost = dp[j] + scores[j][idx - 1];
+            if cost < dp[idx] {
+                dp[idx] = cost;
+                backtrack[idx] = j;
             }
         }
     }
 
-    scores_cp
-        .outer_iter()
-        .map(
-            |mat: ndarray::ArrayBase<ndarray::ViewRepr<&f32>, ndarray::Dim<[usize; 2]>>| {
-                mat.outer_iter().map(|row| row.to_vec()).collect()
-            },
-        )
-        .collect()
+    let mut segments = Vec::new();
+    let mut scores = Vec::new();
 }
 
 #[pyfunction]

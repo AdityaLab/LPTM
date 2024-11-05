@@ -65,7 +65,6 @@ def prune_segments(
     Choose the lower scoring segment. If the left over segments are not enough to cover the sequence,
     end the loop and return the selected segments. Else, remove the lowest scoring segment and repeat.
 
-
     Args:
         segment_idxs (npt.NDArray[np.int32]): selected segments start and end indices [num_segments, 2]
         scores (npt.NDArray[np.float32]): selected segments scores [num_segments]
@@ -96,7 +95,6 @@ def prune_segments_all(
     """Prune the segments from lowest to highest such that segemnts cover the entire sequence.
     Choose the lower scoring segment. If the left over segments are not enough to cover the sequence,
     end the loop and return the selected segments. Else, remove the lowest scoring segment and repeat.
-
 
     Args:
         segment_idxs (npt.NDArray[np.int32]): selected segments start and end indices [batch, num_segments, 2]
