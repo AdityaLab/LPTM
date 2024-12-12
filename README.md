@@ -1,3 +1,4 @@
+# Note: This repository is arxived. Please visit https://github.com/AdityaLab/Samay.
 # LPTM
 
 Large Pre-trained Time-series models
